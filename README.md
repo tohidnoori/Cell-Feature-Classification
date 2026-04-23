@@ -55,7 +55,3 @@ This project builds deep learning and machine learning models to predict the cel
 ### Visualizations
 *   **Feature Importance Plot:** Visualized the top 15 most influential features (e.g., `Area1`, `AvgInten1`) driving the model's predictions.
 *   **Confusion Matrix:** Plotted the test set predictions to show true positives vs. false positives across the different cell classes.
-
-*** 
-
-*(Note: You can adjust the exact accuracy numbers, model file sizes, and specific model choices like XGBoost vs. TabNet based on the actual script outputs you generate).*
