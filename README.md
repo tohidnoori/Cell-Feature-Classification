@@ -1,57 +1,45 @@
-# Cell Feature Classification using Deep Learning 🔬
+# Cell Feature Classification & Feature Engineering 🔬
 
-This project builds deep learning and machine learning models to predict the cell `Class` based on 58 extracted morphological, intensity, and texture features from segmented image data. It compares different neural network architectures and advanced tabular models.
+This project focuses heavily on **preprocessing and feature engineering** to prepare complex tabular data for classification. Using the `segmentationData` dataset, we process 58 extracted morphological, intensity, and texture features to predict the cell `Class`. We then evaluate the quality of our feature engineering by benchmarking three traditional Machine Learning models and one Neural Network.
+
+### Primary Focus: Preprocessing & Feature Engineering
+The core of this notebook is dedicated to transforming raw extracted features into a highly predictive dataset. Key steps include:
+*   **Data Cleaning:** Dropping identifier columns (`Cell` and `Case`) to prevent data leakage.
+*   **Missing Value Handling:** Identifying and imputing missing data.
+*   **Feature Scaling:** Standardizing all 58 numerical features (e.g., `Area1`, `AvgInten1`) using `StandardScaler` to ensure uniform distribution (mean of $0$, variance of $1$), which is critical for distance-based models like KNN and Neural Networks.
+*   **Target Encoding:** Preparing the `Class` variable for binary/multiclass classification.
 
 ### Dataset
 *   **Source:** `segmentationData`
 *   **Target:** `Class`
-*   **Identifiers (Dropped during training):** `Cell`, `Case`
-*   **Features:** 58 numerical features representing cell morphology (e.g., `Area1`, `Perim1`), intensity (e.g., `AvgInten1`, `TotalInten3`), and texture/fibers (e.g., `EntropyInten1`, `FiberLength1`).
-*   **Split:** $80\%$ training / $20\%$ testing
-
-### Preprocessing
-*   Loaded data into a Pandas DataFrame.
-*   Dropped identifier columns (`Cell` and `Case`) to prevent data leakage.
-*   Handled missing values (if any) via median imputation.
-*   Standardized all 58 numerical features using `StandardScaler` so that data has a mean of $0$ and variance of $1$.
-*   One-hot encoded the target variable `Class`.
-*   Converted data to TensorFlow `tf.data.Dataset` / PyTorch DataLoaders.
+*   **Features:** 58 numerical features representing cell morphology, intensity, and texture/fibers.
+*   **Split:** Standard Train/Test split for model evaluation.
 
 ### Models & Results
 
-#### Model 1: Basic Dense Neural Network (MLP)
-*   **Architecture:** Dense (128) → ReLU → Dense (64) → ReLU → Dense (Output)
-*   **Parameters:** ~11.5K
-*   **Results:**
-    *   Accuracy: 0.8105
-    *   F1-score: 0.8012
-    *   Precision: 0.8230
-    *   Recall: 0.7850
-*   **Status:** Overfitted ⚠️
+We trained four different models to test the effectiveness of our engineered features. Below are the results on the test set:
 
-#### Model 2: Deep Neural Network with Dropout & BatchNormalization
-*   **Added:** 
-    *   Batch Normalization after dense layers to stabilize training.
-    *   Dropout ($0.3$) for regularization.
-*   **Architecture:** Dense → BatchNorm → ReLU → Dropout → Dense → BatchNorm → ReLU → Dropout → Dense
-*   **Parameters:** ~12.2K
-*   **Results:**
-    *   Accuracy: 0.8640
-    *   F1-score: 0.8655
-    *   Precision: 0.8510
-    *   Recall: 0.8805
-*   **Status:** Reduced overfitting 🐽
+#### 1. Random Forest (Best Performing Model ⭐)
+*   **Accuracy:** $0.9307$
+*   **Precision:** $0.9394$
+*   **Sensitivity:** $0.9538$
+*   *Note: Tree-based models handled the engineered tabular features exceptionally well, resulting in the highest overall performance and lowest false negative rate.*
 
-#### Model 3: XGBoost (Gradient Boosting) / TabNet
-*   **Architecture:** Advanced tabular architecture (e.g., XGBoost Classifier or TabNet) optimized for structured data.
-*   **Hyperparameters:** Tuned via Grid Search (learning rate, max depth, estimators).
-*   **Results:**
-    *   Accuracy: 0.9250
-    *   F1-score: 0.9248
-    *   Precision: 0.9310
-    *   Recall: 0.9188
-*   **Status:** Best performing model ⭐
+#### 2. Support Vector Machine (SVM)
+*   **Accuracy:** $0.8589$
+*   **Precision:** $0.8830$
+*   **Sensitivity:** $0.9000$
+
+#### 3. K-Nearest Neighbors (KNN, $k=40$)
+*   **Accuracy:** $0.8292$
+*   **Precision:** $0.8775$
+*   **Sensitivity:** $0.8538$
+
+#### 4. Neural Network
+*   **Accuracy:** $0.7946$
+*   **Precision:** $0.8865$
+*   **Sensitivity:** $0.7808$
+*   *Note: The Neural Network had the lowest sensitivity ($0.7808$), indicating it struggled more with false negatives compared to the machine learning baselines on this specific tabular setup.*
 
 ### Visualizations
-*   **Feature Importance Plot:** Visualized the top 15 most influential features (e.g., `Area1`, `AvgInten1`) driving the model's predictions.
-*   **Confusion Matrix:** Plotted the test set predictions to show true positives vs. false positives across the different cell classes.
+*   **Confusion Matrices:** Plotted for all four models (SVM, Random Forest, KNN, Neural Net) to visualize True Positives, True Negatives, False Positives, and False Negatives, allowing for a direct comparison of where each model excels or fails.
